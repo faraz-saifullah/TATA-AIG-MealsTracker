@@ -1,6 +1,6 @@
-'use strict';
-const Pg = require('pg');
-const DatabaseConfig = require('../../Config.json').PostgresDatabase;
+"use strict";
+const Pg = require("pg");
+const DatabaseConfig = require("../../Config.json").PostgresDatabase;
 
 class DataService {
   async executeQuery(sqlQuery) {
@@ -12,7 +12,7 @@ class DataService {
       port: DatabaseConfig.port,
     });
 
-    this.pool.on('error', (error, client) => {
+    this.pool.on("error", (error, client) => {
       console.error(`Error On PG Pool. Reason: ${error}`);
     });
     return this.pool.query(sqlQuery);
@@ -22,33 +22,33 @@ class DataService {
     const queryMessage = {
       success: false,
       status: 200,
-      message: '',
+      message: "",
     };
 
-    return new Promise(async(resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
       try {
         const result = await this.executeQuery(sqlQuery);
         if (isInsert) {
           queryMessage.success = true;
           queryMessage.status = 201;
-          queryMessage.message = 'SQL Insert Query completed successful.';
+          queryMessage.message = "SQL Insert Query completed successful.";
           queryMessage.data = result.rows;
           resolve(queryMessage);
         } else if (result.rowCount === 0) {
           queryMessage.status = 204;
-          queryMessage.message = 'SQL Query returned no data from database.';
+          queryMessage.message = "SQL Query returned no data from database.";
           resolve(queryMessage);
         } else {
           queryMessage.success = true;
           queryMessage.status = 200;
-          queryMessage.message = 'SQL Query completed successful.';
+          queryMessage.message = "SQL Query completed successful.";
           queryMessage.data = result.rows;
           resolve(queryMessage);
         }
         this.pool.end();
       } catch (err) {
         queryMessage.status = 400;
-        queryMessage.message = 'SQL Query failed.';
+        queryMessage.message = "SQL Query failed.";
         queryMessage.error = err.message;
         reject(queryMessage);
         this.pool.end();

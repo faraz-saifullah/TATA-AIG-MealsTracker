@@ -1,10 +1,11 @@
 {
-  "name": "hyperverge-assignment",
+  "name": "tata-aig-assignment",
   "version": "0.0.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "pretest": "eslint --ignore-path .gitignore ."
+    "pretest": "eslint --ignore-path .gitignore .",
+    "format": "prettier-eslint —eslint-config-path ./.eslintrc.js --write $PWD/'**/*.js'"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
@@ -17,6 +18,9 @@
   },
   "devDependencies": {
     "eslint": "^6.8.0",
-    "eslint-config-strongloop": "^2.1.0"
+    "eslint-config-strongloop": "^2.1.0",
+    "prettier": "^2.0.5",
+    "prettier-eslint": "^11.0.0",
+    "prettier-eslint-cli": "^5.0.0"
   }
 }
