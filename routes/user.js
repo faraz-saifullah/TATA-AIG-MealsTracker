@@ -8,7 +8,7 @@ router.get('/', async function(req, res, next) {
   return new APIResponseHandler().handle(res, result);
 });
 
-router.get('/:id', async function(req, res, next) {
+router.get('/:userId', async function(req, res, next) {
   let result = await new User().getUserDetaiils(req);
   return new APIResponseHandler().handle(res, result);
 });
@@ -18,13 +18,23 @@ router.post('/', async function(req, res, next) {
   return new APIResponseHandler().handle(res, result);
 });
 
-router.put('/:id', async function(req, res, next) {
+router.put('/:userId', async function(req, res, next) {
   let result = await new User().updateUserDetails(req);
   return new APIResponseHandler().handle(res, result);
 });
 
-router.delete('/:id', async function(req, res, next) {
+router.delete('/:userId', async function(req, res, next) {
   let result = await new User().deactivateUserAccount(req);
+  return new APIResponseHandler().handle(res, result);
+});
+
+router.get('/:userId/meals', async function(req, res, next) {
+  let result = await new User().getUserMeals(req);
+  return new APIResponseHandler().handle(res, result);
+});
+
+router.post('/:userId/meals', async function(req, res, next) {
+  let result = await new User().addNewMeal(req);
   return new APIResponseHandler().handle(res, result);
 });
 

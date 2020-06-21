@@ -1,8 +1,10 @@
-let UsersDbConnector = require('../dbConnector/users');
+const UsersDbConnector = require('../dbConnector/users');
+const MealsDbConnector = require('../dbConnector/meals');
 
 class User {
     constructor() {
         this.usersDbConnector = new UsersDbConnector();
+        this.mealsDbConnector = new MealsDbConnector();
     }
 
     async getAllUsers(req) {
@@ -41,6 +43,22 @@ class User {
         try {
             return await this.usersDbConnector.deactivateUserAccount(req.params)
         } catch (err) {
+            throw err;
+        }
+    }
+
+    async addNewMeal(req) {
+        try {
+            return await this.mealsDbConnector.addNewMeal(req.params, req.body);
+        } catch(err) {
+            throw err;
+        }
+    }
+
+    async getUserMeals(req) {
+        try {
+            return await this.mealsDbConnector.getUserMeals(req.params, req.query);
+        } catch(err) {
             throw err;
         }
     }

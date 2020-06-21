@@ -18,7 +18,7 @@ class UsersDbConnector {
 
     async getUserDetails(params) {
         const sqlQuery = {
-            text: `SELECT * FROM users WHERE user_id = ${params.id}`,
+            text: `SELECT * FROM users WHERE user_id = ${params.userId}`,
         }
         try {
             return await this.dataService.executeQueryAsPromise(sqlQuery);
@@ -43,7 +43,7 @@ class UsersDbConnector {
 
     async updateUserDetails(params, body) {
         const selectQuery = {
-            text: `SELECT * FROM users where user_id = ${params.id}`,
+            text: `SELECT * FROM users where user_id = ${params.userId}`,
         }
         try {
             let existingInfo = await this.dataService.executeQueryAsPromise(selectQuery);
@@ -70,7 +70,7 @@ class UsersDbConnector {
     async deactivateUserAccount(params) {
         try {
             const sqlQuery = {
-                text: `UPDATE users SET is_active = false where user_id = ${params.id}`,
+                text: `UPDATE users SET is_active = false where user_id = ${params.userId}`,
             }
             return await this.dataService.executeQueryAsPromise(sqlQuery);
         } catch (err) {
