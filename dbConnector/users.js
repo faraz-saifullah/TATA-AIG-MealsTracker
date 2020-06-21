@@ -53,12 +53,13 @@ class UsersDbConnector {
             existingInfo = existingInfo.data[0];
             const updateQuery = {
                 text: `UPDATE users SET (name, email, password, daily_calory_limit) = ($1, $2, $3, $4)
-                where user_id = ${params.id} RETURNING user_id, name, email, daily_calory_limit`,
+                where user_id = ($5) RETURNING user_id, name, email, daily_calory_limit`,
                 values: [
                     body.name || existingInfo.name,
                     body.email || existingInfo.email,
                     body.password || existingInfo.password, 
-                    body.daily_calory_limit || existingInfo.daily_calory_limit
+                    body.daily_calory_limit || existingInfo.daily_calory_limit,
+                    params.userId
                 ]
             };
             return await this.dataService.executeQueryAsPromise(updateQuery);

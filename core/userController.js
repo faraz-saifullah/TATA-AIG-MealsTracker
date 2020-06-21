@@ -62,6 +62,22 @@ class User {
             throw err;
         }
     }
+
+    async deleteMeal(req) {
+        try {
+            return await this.mealsDbConnector.deleteUserMeal(req.params);
+        } catch(err) {
+            throw err;
+        }
+    }
+
+    async updateMeal(req) {
+        try {
+            return await this.mealsDbConnector.updateUserMeal(req.params, req.body);
+        } catch(err) {
+            throw err;
+        }
+    }
 }
 
 module.exports = User;
