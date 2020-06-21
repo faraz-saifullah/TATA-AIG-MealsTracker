@@ -1,0 +1,9 @@
+{
+    "PostgresDatabase" : {
+        "user": "postgres",
+        "host": "localhost",
+        "database": "meals_tracker",
+        "password": "Pass@123",
+        "port": 5432
+    }
+}
