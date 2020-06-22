@@ -1,10 +1,14 @@
 const UsersDbConnector = require("../dbConnector/users");
 const MealsDbConnector = require("../dbConnector/meals");
+const DailyGoalsDbConnector = require("../dbConnector/dailyGoals");
+const AdminRequestsDbConnector = require("../dbConnector/adminRequests");
 
 class User {
   constructor() {
     this.usersDbConnector = new UsersDbConnector();
     this.mealsDbConnector = new MealsDbConnector();
+    this.dailyGoalsDbConnector = new DailyGoalsDbConnector();
+    this.adminRequestsDbConnector = new AdminRequestsDbConnector();
   }
 
   async getAllUsers(req) {
@@ -25,7 +29,15 @@ class User {
 
   async createUser(req) {
     try {
-      return await this.usersDbConnector.createUser(req.body);
+      if (req.body.type === "admin") {
+        return await this.adminRequestsDbConnector.addNewRequest(req.body);
+      }
+      let insertResult = await this.usersDbConnector.createUser(req.body);
+      let userInfo = insertResult.data[0];
+      if (userInfo.type === "regular") {
+        this.dailyGoalsDbConnector.addToDailyGoals(userInfo);
+      }
+      return insertResult;
     } catch (err) {
       throw err;
     }
@@ -33,10 +45,19 @@ class User {
 
   async updateUserDetails(req) {
     try {
-      return await this.usersDbConnector.updateUserDetails(
-        req.params,
-        req.body
+      let existingDetails = await this.usersDbConnector.getUserDetails(
+        req.params
       );
+      let updateResult = await this.usersDbConnector.updateUserDetails(
+        req.params,
+        req.body,
+        existingDetails.data[0]
+      );
+      let userInfo = updateResult.data[0];
+      if (userInfo.type === "regular" && req.body.dailyCaloryLimit) {
+        this.dailyGoalsDbConnector.addToDailyGoals(userInfo);
+      }
+      return updateResult;
     } catch (err) {
       throw err;
     }

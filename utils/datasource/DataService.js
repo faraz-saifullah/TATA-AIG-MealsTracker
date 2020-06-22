@@ -11,7 +11,6 @@ class DataService {
       password: DatabaseConfig.password,
       port: DatabaseConfig.port,
     });
-
     this.pool.on("error", (error, client) => {
       console.error(`Error On PG Pool. Reason: ${error}`);
     });
