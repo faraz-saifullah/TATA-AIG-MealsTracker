@@ -38,13 +38,13 @@ router.post("/:userId/meals", async function (req, res, next) {
   return new APIResponseHandler().handle(res, result);
 });
 
-router.delete("/:userId/meals/:mealId", async function (req, res, next) {
-  let result = await new User().deleteMeal(req);
+router.put("/:userId/meals/:mealId", async function (req, res, next) {
+  let result = await new User().updateMeal(req);
   return new APIResponseHandler().handle(res, result);
 });
 
-router.put("/:userId/meals/:mealId", async function (req, res, next) {
-  let result = await new User().updateMeal(req);
+router.delete("/:userId/meals/:mealId", async function (req, res, next) {
+  let result = await new User().deleteMeal(req);
   return new APIResponseHandler().handle(res, result);
 });
 

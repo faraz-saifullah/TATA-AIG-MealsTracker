@@ -29,14 +29,20 @@ class UsersDbConnector {
   }
 
   async createUser(body) {
+    let defaultCaloryLimit = 500;
+    if (body.type === "admin") {
+      defaultCaloryLimit = null;
+    }
+
     const sqlQuery = {
-      text: `INSERT INTO users (name, email, password, daily_calory_limit)
-                values ($1, $2, $3, $4) RETURNING user_id, type, daily_calory_limit`,
+      text: `INSERT INTO users (name, email, password, type, daily_calory_limit)
+                values ($1, $2, $3, $4, $5) RETURNING user_id, type, daily_calory_limit`,
       values: [
         body.name,
         body.email,
         body.password,
-        body.dailyCaloryLimit || 500,
+        body.type || "regular",
+        body.dailyCaloryLimit || defaultCaloryLimit,
       ],
     };
     try {
