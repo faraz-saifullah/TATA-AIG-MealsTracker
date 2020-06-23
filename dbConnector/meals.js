@@ -7,7 +7,6 @@ class MealsDbConnector {
   }
 
   async addNewMeal(params, body) {
-    console.log(params, body);
     const sqlQuery = {
       text: `INSERT INTO meals (name, date, calories, user_id, note) 
         VALUES ($1, $2, $3, $4, $5)`,
@@ -60,12 +59,10 @@ class MealsDbConnector {
       let existingInfo = await this.dataService.executeQueryAsPromise(
         selectQuery
       );
-      // console.log(existingInfo);
       if (!existingInfo.success) {
         return existingInfo;
       }
       existingInfo = existingInfo.data[0];
-      // console.log(existingInfo);
       const updateQuery = {
         text: `UPDATE meals SET (name, date, calories, note) = ($1, $2, $3, $4)
                 where meal_id = ($5) RETURNING meal_id, name, date, calories, note`,

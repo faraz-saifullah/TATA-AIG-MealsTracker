@@ -13,11 +13,6 @@ router.get("/:userId", async function (req, res, next) {
   return new APIResponseHandler().handle(res, result);
 });
 
-router.post("/", async function (req, res, next) {
-  let result = await new User().createUser(req);
-  return new APIResponseHandler().handle(res, result);
-});
-
 router.put("/:userId", async function (req, res, next) {
   let result = await new User().updateUserDetails(req);
   return new APIResponseHandler().handle(res, result);

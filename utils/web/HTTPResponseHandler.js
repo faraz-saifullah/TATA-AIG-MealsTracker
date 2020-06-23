@@ -1,11 +1,10 @@
 class HTTPResponseHandler {
-  handleSuccess(message, data, status, token) {
+  handleSuccess(message, data, status) {
     return {
       success: true,
       status: status ? status : 200,
       message: message,
       data: data,
-      token: token,
     };
   }
 

@@ -2,6 +2,7 @@ const UsersDbConnector = require("../dbConnector/users");
 const MealsDbConnector = require("../dbConnector/meals");
 const DailyGoalsDbConnector = require("../dbConnector/dailyGoals");
 const AdminRequestsDbConnector = require("../dbConnector/adminRequests");
+const RequestValidator = require("../utils/Validators/request");
 
 class User {
   constructor() {
@@ -9,6 +10,7 @@ class User {
     this.mealsDbConnector = new MealsDbConnector();
     this.dailyGoalsDbConnector = new DailyGoalsDbConnector();
     this.adminRequestsDbConnector = new AdminRequestsDbConnector();
+    this.requestValidator = new RequestValidator();
   }
 
   async getAllUsers(req) {
@@ -29,6 +31,12 @@ class User {
 
   async createUser(req) {
     try {
+      const validationResponse = this.requestValidator.checkSignupCreds(
+        req.body
+      );
+      if (!validationResponse.success) {
+        return validationResponse;
+      }
       if (req.body.type === "admin") {
         return await this.adminRequestsDbConnector.addNewRequest(req.body);
       }
