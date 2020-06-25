@@ -1,8 +1,10 @@
+"use strict";
 const UsersDbConnector = require("../dbConnector/users");
 const MealsDbConnector = require("../dbConnector/meals");
 const DailyGoalsDbConnector = require("../dbConnector/dailyGoals");
 const AdminRequestsDbConnector = require("../dbConnector/adminRequests");
 const RequestValidator = require("../utils/Validators/request");
+const bcrypt = require("bcrypt");
 
 class User {
   constructor() {
@@ -29,6 +31,29 @@ class User {
     }
   }
 
+  async getUserByEmail(req) {
+    try {
+      const validationResponse = this.requestValidator.checkLoginCreds(
+        req.body
+      );
+      if (!validationResponse.success) {
+        return validationResponse;
+      }
+      const result = await this.usersDbConnector.getUserByEmail(req.body);
+      let authenticationResponse = result;
+      if (result.success) {
+        authenticationResponse = await this.requestValidator.checkPassword(
+          req.body,
+          result.data[0]
+        );
+      }
+      delete authenticationResponse.data.password;
+      return authenticationResponse;
+    } catch (err) {
+      throw err;
+    }
+  }
+
   async createUser(req) {
     try {
       const validationResponse = this.requestValidator.checkSignupCreds(
@@ -37,13 +62,22 @@ class User {
       if (!validationResponse.success) {
         return validationResponse;
       }
+      const password = await bcrypt.hash(req.body.password, 5);
       if (req.body.type === "admin") {
-        return await this.adminRequestsDbConnector.addNewRequest(req.body);
+        return await this.adminRequestsDbConnector.addNewRequest(
+          req.body,
+          password
+        );
       }
-      let insertResult = await this.usersDbConnector.createUser(req.body);
-      let userInfo = insertResult.data[0];
-      if (userInfo.type === "regular") {
-        this.dailyGoalsDbConnector.addToDailyGoals(userInfo);
+      const insertResult = await this.usersDbConnector.createUser(
+        req.body,
+        password
+      );
+      if (insertResult.success) {
+        const userInfo = insertResult.data[0];
+        if (userInfo.type === "regular") {
+          this.dailyGoalsDbConnector.addToDailyGoals(userInfo);
+        }
       }
       return insertResult;
     } catch (err) {
@@ -56,10 +90,18 @@ class User {
       let existingDetails = await this.usersDbConnector.getUserDetails(
         req.params
       );
+      if (!existingDetails.success) {
+        return existingDetails;
+      }
+      let password = null;
+      if (req.body.password) {
+        password = await bcrypt.hash(req.body.password, 5);
+      }
       let updateResult = await this.usersDbConnector.updateUserDetails(
         req.params,
         req.body,
-        existingDetails.data[0]
+        existingDetails.data[0],
+        password
       );
       let userInfo = updateResult.data[0];
       if (userInfo.type === "regular" && req.body.dailyCaloryLimit) {

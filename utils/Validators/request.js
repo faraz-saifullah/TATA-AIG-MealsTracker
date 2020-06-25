@@ -1,5 +1,6 @@
 const HttpResponseHandler = require("../web/HTTPResponseHandler");
 const HttpResponseCodes = require("../web/HttpResponseCodes");
+const bcrypt = require("bcrypt");
 
 class RequestValidator {
   constructor() {
@@ -18,30 +19,66 @@ class RequestValidator {
   checkSignupCreds(body) {
     if (!body.name) {
       return this.httpResponseHandler.handleFailed(
-        "Name can not be empty",
         "Bad Request",
+        "Name can not be empty",
         this.httpResponseCodes.BAD_REQUEST()
       );
     } else if (!body.password) {
       return this.httpResponseHandler.handleFailed(
-        "Password can not be empty",
         "Bad Request",
+        "Password can not be empty",
         this.httpResponseCodes.BAD_REQUEST()
       );
     } else if (!body.email) {
       return this.httpResponseHandler.handleFailed(
-        "Email can not be empty",
         "Bad Request",
+        "Email can not be empty",
         this.httpResponseCodes.BAD_REQUEST()
       );
     } else if (!this.checkEmailValidity(body.email)) {
       return this.httpResponseHandler.handleFailed(
-        "Invalid email address",
         "Bad Request",
+        "Invalid email address",
         this.httpResponseCodes.BAD_REQUEST()
       );
     } else {
       return this.httpResponseHandler.handleSuccess("Success", body);
+    }
+  }
+
+  checkLoginCreds(body) {
+    if (!body.password) {
+      return this.httpResponseHandler.handleFailed(
+        "Bad Request",
+        "Password can not be empty",
+        this.httpResponseCodes.BAD_REQUEST()
+      );
+    } else if (!body.email) {
+      return this.httpResponseHandler.handleFailed(
+        "Bad Request",
+        "Email can not be empty",
+        this.httpResponseCodes.BAD_REQUEST()
+      );
+    } else if (!this.checkEmailValidity(body.email)) {
+      return this.httpResponseHandler.handleFailed(
+        "Bad Request",
+        "Invalid email address",
+        this.httpResponseCodes.BAD_REQUEST()
+      );
+    } else {
+      return this.httpResponseHandler.handleSuccess("Success", body);
+    }
+  }
+
+  async checkPassword(body, userData) {
+    if (await bcrypt.compare(body.password, userData.password)) {
+      return this.httpResponseHandler.handleSuccess("Success", userData);
+    } else {
+      return this.httpResponseHandler.handleFailed(
+        "Unauthorized",
+        "Incorrect login credentials",
+        this.httpResponseCodes.UNAUTHORIZED()
+      );
     }
   }
 }

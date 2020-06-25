@@ -22,7 +22,7 @@ class Admin {
       );
       adminInfo = adminInfo.data[0];
       adminInfo.type = "admin";
-      return this.usersDbConnector.createUser(adminInfo);
+      return this.usersDbConnector.createUser(adminInfo, adminInfo.password);
     } catch (err) {
       throw err;
     }

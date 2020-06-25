@@ -35,7 +35,8 @@ class DataService {
           resolve(queryMessage);
         } else if (result.rowCount === 0) {
           queryMessage.status = 204;
-          queryMessage.message = "SQL Query returned no data from database.";
+          queryMessage.message =
+            "Requested data no longer present in the database.";
           resolve(queryMessage);
         } else {
           queryMessage.success = true;
