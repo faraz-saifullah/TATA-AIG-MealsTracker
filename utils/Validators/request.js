@@ -72,6 +72,7 @@ class RequestValidator {
 
   async checkPassword(body, userData) {
     if (await bcrypt.compare(body.password, userData.password)) {
+      delete userData.password;
       return this.httpResponseHandler.handleSuccess("Success", userData);
     } else {
       return this.httpResponseHandler.handleFailed(

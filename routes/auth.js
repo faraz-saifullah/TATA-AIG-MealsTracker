@@ -2,6 +2,8 @@ let express = require("express");
 let router = express.Router();
 let User = require("../core/userController");
 let APIResponseHandler = require("../utils/APIResponseHandler/APIResponseHandler");
+let AuthController = require("../core/authController");
+let authController = new AuthController();
 
 router.post("/signup", async function (req, res, next) {
   let result = await new User().createUser(req);
@@ -10,20 +12,14 @@ router.post("/signup", async function (req, res, next) {
 
 router.post("/login", async function (req, res, next) {
   let result = await new User().getUserByEmail(req);
-  const secure = req.app.get("env") === "development";
-  req.session.userId = result.data.user_id;
-  req.session.type = result.data.type;
-  res.cookie("user_id", result.data.user_id, {
-    httpOnly: true,
-    secure: secure,
-    signed: true,
-  });
+  authController.startSession(req, result);
+  authController.setCookies(req, res, result);
   return new APIResponseHandler().handleAuthentication(res, result);
 });
 
 router.post("/logout", async function (req, res, next) {
-  req.session.destroy();
-  res.clearCookie("user_id");
+  authController.destroySession(req);
+  authController.clearCookies(res);
   const result = {
     success: true,
     status: 200,

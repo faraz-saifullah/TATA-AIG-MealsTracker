@@ -47,7 +47,6 @@ class User {
           result.data[0]
         );
       }
-      delete authenticationResponse.data.password;
       return authenticationResponse;
     } catch (err) {
       throw err;
